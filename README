@@ -1,6 +1,41 @@
-To launch this kernel module, first figure out what the gpio pin is by running:
+This Linux Kernel Module will install an interrupt based counter module to monitor and count pulses on a GPIO pin.  Short of specialized
+hardware add ons, this is the fastest way to count pulses in Linux.
+
+Building
+--------
+Building is easy.  simply type:
+make
+
+Installing the Module
+---------------------
+from the directory you built in, run the following
+sudo insmod gpio-counter.ko gpio_pin=###
+where ### is the gpio pin you want to monitor (check the NOTE below)
+
+Parameters
+----------
+There are two configurable parameters:
+  gpio_pin         : The GPIO pin you want to use.  This is the KERNEL GPIO pin, not the one you're probably thiking of.  See the NOTE below.
+  debounce_time_us : The number of microseconds for debouncing inputs.  Defaults to 0, but 20000 might be good for pushbuttons.
+
+Reading the value
+-----------------
+Read the value of the counter by looking at
+cat /sys/kernel/gpio-counter/pulse_count
+
+Reset the value
+---------------
+You can reset the value by overwriting the count with zero
+echo 0 > /sys/kernel/gpio-counter/pulse_count
+
+NOTE on GPIO Pin numbers
+------------------------
+The gpio pin number passed into this module are the Kernel gpio numbers.  If you're using a Raspberry Pi, that means they're likely in the 
+500-900 range.  If you pass something below 100 in, it'll fail.  To make matters worse, every release of RaspberryPi will likely have
+different numbers for the same pin.  To get the pin number for YOUR particular board, run this command:
 cat /sys/kernel/debug/gpio
 
-You'll likely get a pin number somehwere in the 500-700 range
-Then, run this to install and run the kernel module:
-sudo insmod gpio-counter.ko gpio_pin=532
+NOTE on rollover
+----------------
+The count stored here is an unsigned 32-bit integer, which means that once it gets to 4,294,967,296 it'll wrap to 0.  If that's 
+in the range of what you're dealing with, you'll probably be fine
