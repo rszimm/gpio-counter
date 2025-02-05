@@ -1,0 +1,6 @@
+To launch this kernel module, first figure out what the gpio pin is by running:
+cat /sys/kernel/debug/gpio
+
+You'll likely get a pin number somehwere in the 500-700 range
+Then, run this to install and run the kernel module:
+sudo insmod gpio-counter.ko gpio_pin=532
