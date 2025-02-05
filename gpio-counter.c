@@ -135,7 +135,7 @@ static int __init gpio_counter_init(void)
     atomic_set(&pulse_count, 0);
 
     /* Request GPIO */
-    ret = gpio_request(gpio_pin, "gpioPin");
+    ret = gpio_request(gpio_pin, "gpio-counter");
     if (ret) {
         pr_err("Failed to request GPIO %d: error %d\n", gpio_pin, ret);
         return ret;
