@@ -15,18 +15,20 @@ where ### is the gpio pin you want to monitor (check the NOTE below)
 Parameters
 ----------
 There are two configurable parameters:
-  gpio_pin         : The GPIO pin you want to use.  This is the KERNEL GPIO pin, not the one you're probably thiking of.  See the NOTE below.
+  gpio_pins         : The GPIO pins you want to use, comma separated.  
+                      This is the KERNEL GPIO pin, not the one you're probably thiking of.  See the NOTE below.
   debounce_time_us : The number of microseconds for debouncing inputs.  Defaults to 0, but 20000 might be good for pushbuttons.
 
 Reading the value
 -----------------
-Read the value of the counter by looking at
-cat /sys/kernel/gpio-counter/pulse_count
+Read the value of the counter by looking at: (replace the 0 with the index of the gpio you're monitoring)
+cat /sys/kernel/gpio-counter/0/pulse_count
+
 
 Reset the value
 ---------------
 You can reset the value by overwriting the count with zero
-echo 0 > /sys/kernel/gpio-counter/pulse_count
+echo 0 > /sys/kernel/gpio-counter/0/pulse_count
 
 NOTE on GPIO Pin numbers
 ------------------------

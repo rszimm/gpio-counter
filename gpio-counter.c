@@ -55,6 +55,8 @@ static struct gc_channel channels[MAX_CHANNELS];
  * The counter is updated with an atomic operation so that no spinlock is needed 
  * in the IRQ context.  However, the debounce logic needs a lock to be fully
  * correct if multiple interrupts arrive very close together on a multi-core machine.
+ * However, on any GPIO sources I can think of, this isn't really possible, so the 
+ * lock is probably overkill.  But it's here for correctness.
  */
 static irqreturn_t gpio_irq_handler(int irq, void *dev_id)
 {
@@ -127,6 +129,11 @@ static ssize_t pulse_count_store(struct kobject *kobj,
     mutex_lock(&ch->lock);
     if (val == 0) {
         atomic_set(&ch->pulse_count, 0);
+        unsigned long flags;
+        spin_lock_irqsave(&ch->irq_lock, flags);
+        ch->last_interrupt_time = 0;
+        spin_unlock_irqrestore(&ch->irq_lock, flags);
+
         pr_info("Pulse count reset to 0\n");
     } else {
         pr_info("Write ignored. To reset, write 0\n");
